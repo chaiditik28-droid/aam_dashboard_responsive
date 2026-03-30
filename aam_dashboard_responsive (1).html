@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AAM Safety Dashboard - Presentation 1080p</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700;800&family=Prompt:wght@300;400;600;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f0f4f8; --card:#fff; --border:#dde5ee;
+    --shadow:rgba(30,60,120,0.08); --shadow-md:rgba(30,60,120,0.14);
+    --green:#0db96a; --green-light:#e8faf2; --green-mid:#c5f0da;
+    --red:#e8354a; --red-light:#fef0f2;
+    --yellow:#f59e0b; --yellow-light:#fffbeb;
+    --blue:#2563eb; --blue-light:#eff6ff;
+    --teal:#0891b2; --teal-light:#ecfeff;
+    --text:#1e293b; --text2:#334155; --muted:#64748b; --muted2:#94a3b8;
+    --hdr:linear-gradient(135deg,#0f3460 0%,#16538a 50%,#0f3460 100%);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  /* ── RESPONSIVE FIT — scales to any screen size automatically ── */
+  html{height:100%;overflow:hidden;background:var(--bg);}
+  body{
+    width:1280px; height:720px;
+    overflow:hidden;
+    font-family:'Sarabun',sans-serif;
+    background:var(--bg); color:var(--text);
+    transform-origin: top left;
+  }
+  body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(30,80,180,0.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0;}
+  .wrap{position:relative;z-index:1;width:1280px;height:720px;padding:7px 12px;display:flex;flex-direction:column;gap:5px;}
+
+  /* ── HEADER ── */
+  header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:var(--hdr);border-radius:12px;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(15,52,96,0.25);flex-shrink:0;}
+  header::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none;}
+  header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),#00d9a0,var(--green));background-size:200% 100%;animation:shine 4s linear infinite;}
+  @keyframes shine{0%{background-position:200% center}100%{background-position:-200% center}}
+
+  .hdr-logo{display:flex;align-items:center;gap:10px;}
+  .logo-box{width:42px;height:42px;background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.25);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+  .logo-box svg{width:24px;height:24px;}
+  .hdr-title h1{font-family:'Oswald',sans-serif;font-size:17px;font-weight:600;color:#fff;letter-spacing:2px;}
+  .hdr-title p{font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:1.5px;margin-top:2px;}
+  .hdr-center{text-align:center;}
+  .hdr-center h2{font-family:'Prompt',sans-serif;font-size:17px;font-weight:700;color:#fff;letter-spacing:1px;}
+  .hdr-center .sub{font-size:9px;color:rgba(255,255,255,0.5);letter-spacing:2px;margin-top:3px;}
+  .live-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:5px;}
+  .live-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(232,53,74,0.25);border:1px solid rgba(232,53,74,0.5);color:#ff8090;font-size:9px;font-weight:700;padding:2px 9px;border-radius:20px;letter-spacing:2px;}
+  .live-dot{width:5px;height:5px;border-radius:50%;background:#ff5068;animation:blink 1s ease-in-out infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+  .upd-info{font-size:9px;color:rgba(255,255,255,0.4);}
+  .hdr-right{text-align:right;}
+  .time-big{font-family:'Oswald',sans-serif;font-size:30px;font-weight:600;color:#fff;letter-spacing:4px;text-shadow:0 0 20px rgba(0,217,160,0.4);}
+  .date-sm{font-size:9px;color:rgba(255,255,255,0.55);margin-top:1px;}
+
+  /* ── EDIT BTN ── */
+  .edit-btn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.3);color:#fff;font-family:'Sarabun',sans-serif;font-size:11px;font-weight:600;padding:6px 13px;border-radius:8px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+  .edit-btn:hover{background:rgba(255,255,255,0.22);border-color:rgba(255,255,255,0.5);transform:translateY(-1px);}
+  .edit-btn svg{width:13px;height:13px;}
+
+  /* ── TICKER ── */
+  .ticker{background:linear-gradient(90deg,#fff8e6,#fff);border:1px solid #fde68a;border-left:4px solid var(--yellow);border-radius:7px;padding:4px 10px;display:flex;align-items:center;gap:10px;overflow:hidden;box-shadow:0 2px 8px rgba(245,158,11,0.1);flex-shrink:0;}
+  .ticker-lbl{font-size:9px;font-weight:700;color:var(--yellow);letter-spacing:2px;white-space:nowrap;border-right:1px solid #fde68a;padding-right:10px;flex-shrink:0;}
+  .ticker-wrap{overflow:hidden;flex:1;}
+  .ticker-text{display:inline-block;font-size:11px;color:#92400e;white-space:nowrap;animation:roll 35s linear infinite;}
+  @keyframes roll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+
+  /* ── EMP STRIP ── */
+  .emp-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;flex-shrink:0;}
+  .emp-card{background:var(--card);border-radius:9px;padding:7px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 10px var(--shadow);border:1px solid var(--border);position:relative;overflow:hidden;}
+  .emp-bar{position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:9px 0 0 9px;}
+  .emp-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+  .emp-num{font-family:'Oswald',sans-serif;font-size:26px;font-weight:700;line-height:1;}
+  .emp-num.g{color:var(--green);} .emp-num.t{color:var(--teal);} .emp-num.o{color:#f97316;}
+  .emp-lbl{font-size:10px;color:var(--muted);margin-top:1px;font-weight:600;}
+  .emp-unit{font-size:9px;color:var(--muted2);}
+
+  /* ── ZERO BANNER ── */
+  .zero-banner{background:linear-gradient(135deg,#f0fdf7,#e8faf2);border:2px solid var(--green-mid);border-radius:10px;padding:7px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 3px 16px rgba(13,185,106,0.12);position:relative;overflow:hidden;flex-shrink:0;}
+  .zero-banner::before{content:'🛡️';position:absolute;right:-10px;top:-15px;font-size:90px;opacity:0.04;transform:rotate(15deg);pointer-events:none;}
+  .zero-lbl{font-size:12px;color:var(--muted);margin-bottom:3px;font-weight:700;}
+  .zero-sub{font-size:10px;color:var(--muted2);}
+  .zero-days-wrap{text-align:center;}
+  .days-big{font-family:'Oswald',sans-serif;font-size:56px;font-weight:700;line-height:1;color:var(--green);filter:drop-shadow(0 3px 10px rgba(13,185,106,0.25));animation:flt 3s ease-in-out infinite;}
+  @keyframes flt{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .days-unit{font-size:13px;color:var(--muted);margin-top:-2px;font-weight:600;}
+  .zero-right{min-width:220px;}
+  .tgt-lbl{font-size:10px;color:var(--muted);margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;font-weight:600;}
+  .tgt-num{font-weight:700;color:var(--text);font-size:11px;}
+  .prog-track{height:10px;background:#d1fae5;border-radius:5px;overflow:hidden;}
+  .prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#0db96a,#06d6a0);transition:width 1.5s cubic-bezier(0.4,0,0.2,1);position:relative;}
+  .prog-fill::after{content:'';position:absolute;right:-1px;top:0;width:10px;height:100%;background:rgba(255,255,255,0.6);border-radius:0 5px 5px 0;animation:psh 2s ease-in-out infinite;}
+  @keyframes psh{0%,100%{opacity:0.4}50%{opacity:1}}
+  .prog-info{display:flex;justify-content:space-between;margin-top:4px;font-size:10px;color:var(--muted);}
+  .pct-txt{font-weight:700;color:var(--green);font-size:11px;}
+  .rem-badge{display:inline-flex;align-items:center;gap:4px;background:var(--yellow-light);border:1px solid #fde68a;border-radius:7px;padding:5px 10px;margin-top:6px;font-size:10px;color:#92400e;font-weight:600;}
+
+  /* ── LAST ACC ── */
+  .last-acc{background:var(--card);border:1px solid #fecdd3;border-left:5px solid var(--red);border-radius:8px;padding:5px 14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(232,53,74,0.06);flex-shrink:0;}
+  .la-lbl{font-size:9px;color:var(--muted);margin-bottom:1px;font-weight:600;}
+  .la-date{font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;color:var(--red);letter-spacing:1px;}
+  .data-info{text-align:right;font-size:8px;color:var(--muted2);line-height:1.6;}
+  .data-info strong{color:var(--text2);font-size:9px;}
+
+  /* ── BOTTOM GRID ── */
+  .btm-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;flex:1;min-height:0;overflow:hidden;}
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:8px 10px;box-shadow:0 2px 10px var(--shadow);overflow:hidden;display:flex;flex-direction:column;}
+  .panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--border);flex-shrink:0;}
+  .panel-title{font-family:'Prompt',sans-serif;font-size:11px;font-weight:700;color:var(--text);}
+  .pbadge{font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px;}
+  .pb-green{background:var(--green-light);color:var(--green);border:1px solid var(--green-mid);}
+  .pb-blue{background:var(--blue-light);color:var(--blue);border:1px solid #bfdbfe;}
+
+  /* CALENDAR */
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;}
+  .cal-hd{font-size:9px;font-weight:700;color:var(--muted);padding:2px 0;}
+  .cal-day{height:32px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:default;}
+  .cal-day.empty{background:transparent;}
+  .cal-day.safe{background:var(--green-light);color:#059669;border:1px solid #a7f3d0;}
+  .cal-day.today{background:var(--green);color:#fff;font-weight:800;box-shadow:0 3px 10px rgba(13,185,106,0.4);animation:tglow 2s ease-in-out infinite;}
+  @keyframes tglow{0%,100%{box-shadow:0 3px 10px rgba(13,185,106,0.4)}50%{box-shadow:0 3px 18px rgba(13,185,106,0.7)}}
+  .cal-day.future{background:#f8fafc;color:var(--muted2);border:1px solid #e2e8f0;}
+  .cal-day.accident{background:var(--red-light);color:var(--red);border:1px solid #fecdd3;}
+  .cal-day.nearacc{background:var(--yellow-light);color:#b45309;border:1px solid #fde68a;}
+
+  /* LEGEND */
+  .legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px;}
+  .leg-item{display:flex;align-items:center;gap:4px;font-size:9px;color:var(--muted);font-weight:500;}
+  .leg-dot{width:9px;height:9px;border-radius:2px;}
+
+  /* PERF */
+  .perf-months{display:flex;justify-content:flex-end;gap:6px;padding-bottom:4px;margin-bottom:2px;border-bottom:1px solid var(--border);}
+  .mlbl{font-size:9px;color:var(--muted);width:28px;text-align:center;font-weight:700;}
+  .perf-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f1f5f9;}
+  .perf-row:last-child{border-bottom:none;}
+  .pdot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+  .plbl{font-size:9px;color:var(--muted);flex:1;font-weight:500;}
+  .pvals{display:flex;gap:4px;}
+  .pval{font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;width:28px;text-align:center;color:var(--text);}
+  .punit{font-size:8px;color:var(--muted2);align-self:flex-end;margin-bottom:1px;}
+  .mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px;}
+  .mini-card{border-radius:8px;padding:6px;text-align:center;border:1px solid;}
+  .mini-card.green{background:var(--green-light);border-color:var(--green-mid);}
+  .mini-card.teal{background:var(--teal-light);border-color:#a5f3fc;}
+  .mini-num{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;}
+  .mini-num.green{color:var(--green);} .mini-num.teal{color:var(--teal);}
+  .mini-sub{font-size:8px;color:var(--muted);margin-top:1px;font-weight:500;}
+  .score-box{background:linear-gradient(135deg,#f0fdf7,#e0faf0);border:1px solid var(--green-mid);border-radius:8px;padding:6px 10px;margin-top:5px;display:flex;align-items:center;justify-content:space-between;}
+  .score-l{font-size:9px;color:var(--muted);font-weight:700;}
+  .score-r{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:var(--green);}
+  .pls{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);vertical-align:middle;margin-right:3px;animation:plsg 2s ease-in-out infinite;}
+  @keyframes plsg{0%,100%{box-shadow:0 0 0 0 rgba(13,185,106,0.4)}50%{box-shadow:0 0 0 4px rgba(13,185,106,0)}}
+
+  /* ══════════════════════════════════════
+     EDIT MODAL
+  ══════════════════════════════════════ */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,30,60,0.55);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:#fff;border-radius:24px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(15,30,60,0.25);animation:mopen 0.3s cubic-bezier(0.4,0,0.2,1);}
+  @keyframes mopen{from{opacity:0;transform:translateY(24px) scale(0.97)}to{opacity:1;transform:none}}
+  .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff;z-index:2;border-radius:24px 24px 0 0;}
+  .modal-hdr h3{font-family:'Prompt',sans-serif;font-size:18px;font-weight:600;color:var(--text);}
+  .modal-close{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:#f8fafc;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all 0.15s;font-size:18px;line-height:1;}
+  .modal-close:hover{background:var(--red-light);border-color:#fecdd3;color:var(--red);}
+  .modal-body{padding:20px 24px 24px;}
+
+  /* Section inside modal */
+  .form-section{margin-bottom:22px;}
+  .form-section-title{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #f1f5f9;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .form-grid.full{grid-template-columns:1fr;}
+  .form-group{display:flex;flex-direction:column;gap:5px;}
+  .form-group label{font-size:12px;font-weight:600;color:var(--text2);}
+  .form-group input,.form-group select{border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;font-family:'Sarabun',sans-serif;font-size:14px;color:var(--text);background:#fafbfc;transition:border-color 0.2s,box-shadow 0.2s;outline:none;}
+  .form-group input:focus,.form-group select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,0.1);}
+  .form-group input[type="date"]{cursor:pointer;}
+
+  /* Monthly accident inputs */
+  .acc-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .acc-table th{text-align:left;padding:7px 10px;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.5px;border-bottom:2px solid var(--border);}
+  .acc-table td{padding:6px 8px;border-bottom:1px solid #f1f5f9;}
+  .acc-table tr:last-child td{border-bottom:none;}
+  .acc-table input{width:60px;border:1.5px solid var(--border);border-radius:8px;padding:5px 8px;font-family:'Sarabun',sans-serif;font-size:13px;text-align:center;color:var(--text);background:#fafbfc;transition:border-color 0.2s;}
+  .acc-table input:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 2px rgba(37,99,235,0.1);}
+  .type-dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:middle;}
+
+  /* Buttons */
+  .modal-footer{display:flex;gap:10px;margin-top:24px;padding-top:16px;border-top:1px solid var(--border);}
+  .btn{border:none;border-radius:12px;padding:11px 20px;font-family:'Sarabun',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:7px;}
+  .btn-primary{background:var(--blue);color:#fff;flex:1;justify-content:center;}
+  .btn-primary:hover{background:#1d4ed8;transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,99,235,0.3);}
+  .btn-danger{background:var(--red-light);color:var(--red);border:1px solid #fecdd3;}
+  .btn-danger:hover{background:#fee2e2;}
+  .btn-ghost{background:#f1f5f9;color:var(--muted);}
+  .btn-ghost:hover{background:#e2e8f0;}
+
+  /* Toast */
+  .toast{position:fixed;bottom:24px;right:24px;background:#1e293b;color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.2);z-index:2000;display:flex;align-items:center;gap:8px;transform:translateY(80px);opacity:0;transition:all 0.35s cubic-bezier(0.4,0,0.2,1);}
+  .toast.show{transform:translateY(0);opacity:1;}
+  .toast.green{background:var(--green);}
+
+  /* Cal day tooltip */
+  .cal-day[title]{cursor:help;}
+
+  /* ── PPT HINT ── */
+  .fs-hint{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(15,52,96,0.7);color:rgba(255,255,255,0.7);font-size:10px;padding:4px 14px;border-radius:20px;pointer-events:none;letter-spacing:1px;backdrop-filter:blur(4px);z-index:500;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="hdr-logo">
+      <div class="logo-box">
+        <svg viewBox="0 0 40 40" fill="none"><path d="M20 3L5 10v10c0 9 6.5 17.4 15 19 8.5-1.6 15-10 15-19V10L20 3z" fill="rgba(255,255,255,0.9)"/><path d="M15 20l4 4 8-8" stroke="#0f3460" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="hdr-title">
+        <h1>AMPAS AUTO MIRROR</h1>
+        <p>CO., LTD. — SAFETY INFORMATION SYSTEM</p>
+      </div>
+    </div>
+
+    <div class="hdr-center">
+      <h2>รายงานข้อมูลความปลอดภัย AAM</h2>
+      <div class="sub">REAL-TIME SAFETY DASHBOARD</div>
+      <div class="live-row">
+        <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+        <span class="upd-info" id="last-update">กำลังโหลด...</span>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;">
+      <div class="hdr-right">
+        <div class="time-big" id="clock">--:--:--</div>
+        <div class="date-sm" id="date-display">--</div>
+      </div>
+      <button class="edit-btn" onclick="openModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        แก้ไขข้อมูล
+      </button>
+    </div>
+  </header>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <span class="ticker-lbl">📢 ประกาศ</span>
+    <div class="ticker-wrap"><span class="ticker-text" id="ticker-text">กำลังโหลด...</span></div>
+  </div>
+
+  <!-- EMP STRIP -->
+  <div class="emp-strip">
+    <div class="emp-card">
+      <div class="emp-bar" style="background:var(--green);"></div>
+      <div class="emp-icon" style="background:var(--green-light);">👷</div>
+      <div>
+        <div class="emp-lbl">พนักงาน AAM</div>
+        <div class="emp-num g" id="disp-aam">296</div>
+        <div class="emp-unit">คน</div>
+      </div>
+    </div>
+    <div class="emp-card">
+      <div class="emp-bar" style="background:var(--teal);"></div>
+      <div class="emp-icon" style="background:var(--teal-light);">🏭</div>
+      <div>
+        <div class="emp-lbl">พนักงาน SUB (QWS)</div>
+        <div class="emp-num t" id="disp-sub">133</div>
+        <div class="emp-unit">คน</div>
+      </div>
+    </div>
+    <div class="emp-card">
+      <div class="emp-bar" style="background:#f97316;"></div>
+      <div class="emp-icon" style="background:#fff7ed;">👥</div>
+      <div>
+        <div class="emp-lbl">พนักงานรวมทั้งหมด</div>
+        <div class="emp-num o" id="disp-total">429</div>
+        <div class="emp-unit">คน (AAM + SUB)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZERO BANNER -->
+  <div class="zero-banner">
+    <div>
+      <div class="zero-lbl">🏆 ZERO ACCIDENT — ไม่เกิดอุบัติเหตุถึงขั้นหยุดงาน</div>
+      <div class="zero-sub">เราทำงานมาแล้วโดยไม่เกิดอุบัติเหตุถึงขั้นหยุดงานเป็นระยะเวลา</div>
+    </div>
+    <div class="zero-days-wrap">
+      <div class="days-big" id="safe-days">—</div>
+      <div class="days-unit">วัน / Days Safe</div>
+    </div>
+    <div class="zero-right">
+      <div class="tgt-lbl">
+        <span>ความคืบหน้าสู่เป้าหมาย</span>
+        <span class="tgt-num">เป้าหมาย <span id="disp-target">500</span> วัน</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="prog-info"><span>0 วัน</span><span class="pct-txt" id="prog-pct">0%</span><span id="disp-target2">500</span> วัน</div>
+      <div class="rem-badge">⏳ เหลืออีก <strong id="days-rem" style="margin:0 4px;color:#b45309;">—</strong> วัน ถึงเป้าหมาย</div>
+    </div>
+  </div>
+
+  <!-- LAST ACCIDENT -->
+  <div class="last-acc">
+    <div>
+      <div class="la-lbl">🔴 อุบัติเหตุถึงขั้นหยุดงานครั้งสุดท้าย เมื่อ</div>
+      <div class="la-date" id="disp-acc-date">—</div>
+    </div>
+    <div class="data-info">
+      ข้อมูล ณ วันที่ <strong id="data-date">—</strong><br>
+      เวลา <strong id="data-time">—</strong>
+    </div>
+  </div>
+
+  <!-- BOTTOM GRID -->
+  <div class="btm-grid">
+    <!-- CALENDAR (span 2) -->
+    <div class="panel" style="grid-column:span 2;">
+      <div class="panel-hdr">
+        <div class="panel-title">📅 ปฏิทินความปลอดภัยประจำเดือน</div>
+        <span class="pbadge pb-green" id="month-badge">—</span>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-hd">อา</div><div class="cal-hd">จ</div><div class="cal-hd">อ</div>
+        <div class="cal-hd">พ</div><div class="cal-hd">พฤ</div><div class="cal-hd">ศ</div><div class="cal-hd">ส</div>
+      </div>
+      <div class="cal-grid" id="calendar" style="margin-top:8px;"></div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:var(--green-light);border:1px solid #a7f3d0;"></div>ปลอดภัย</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--green);"></div>วันนี้</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--red-light);border:1px solid #fecdd3;"></div>อุบัติเหตุขั้นหยุดงาน</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--yellow-light);border:1px solid #fde68a;"></div>อุบัติเหตุไม่หยุดงาน</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#f8fafc;border:1px solid #e2e8f0;"></div>วันที่ยังมาไม่ถึง</div>
+      </div>
+    </div>
+
+    <!-- PERFORMANCE -->
+    <div class="panel">
+      <div class="panel-hdr">
+        <div class="panel-title">📊 Monthly Safety Performance</div>
+        <span class="pbadge pb-blue">ผลการดำเนินงาน</span>
+      </div>
+      <div class="perf-months">
+        <div class="mlbl" id="m1lbl">ม.ค.</div>
+        <div class="mlbl" id="m2lbl">ก.พ.</div>
+        <div class="mlbl" id="m3lbl">มี.ค.</div>
+      </div>
+      <div class="perf-row">
+        <div class="pdot" style="background:var(--red);"></div>
+        <div class="plbl">อุบัติเหตุขั้นหยุดงาน</div>
+        <div class="pvals">
+          <div class="pval" id="pm1-lti">0</div><div class="pval" id="pm2-lti">0</div>
+          <div class="pval" id="pm3-lti" style="color:var(--muted2);">—</div>
+          <div class="punit">ครั้ง</div>
+        </div>
+      </div>
+      <div class="perf-row">
+        <div class="pdot" style="background:var(--yellow);"></div>
+        <div class="plbl">อุบัติเหตุไม่หยุดงาน</div>
+        <div class="pvals">
+          <div class="pval" id="pm1-nlt">0</div><div class="pval" id="pm2-nlt">0</div>
+          <div class="pval" id="pm3-nlt" style="color:var(--muted2);">—</div>
+          <div class="punit">ครั้ง</div>
+        </div>
+      </div>
+      <div class="perf-row">
+        <div class="pdot" style="background:var(--blue);"></div>
+        <div class="plbl">ทรัพย์สินเสียหาย</div>
+        <div class="pvals">
+          <div class="pval" id="pm1-prp">0</div><div class="pval" id="pm2-prp">0</div>
+          <div class="pval" id="pm3-prp" style="color:var(--muted2);">—</div>
+          <div class="punit">ครั้ง</div>
+        </div>
+      </div>
+      <div class="mini-stats">
+        <div class="mini-card green">
+          <div style="font-size:20px;">🟢</div>
+          <div class="mini-num green" id="mini-lti">0</div>
+          <div class="mini-sub">LTI เดือนนี้</div>
+        </div>
+        <div class="mini-card teal">
+          <div style="font-size:20px;">📈</div>
+          <div class="mini-num teal" id="ytd-days">—</div>
+          <div class="mini-sub">วันสะสมปลอดภัย</div>
+        </div>
+      </div>
+      <div class="score-box">
+        <div class="score-l"><span class="pls"></span>SAFETY SCORE<br><span style="font-size:10px;color:var(--muted2);" id="score-month">เดือนนี้</span></div>
+        <div class="score-r" id="score-val">100%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     EDIT MODAL
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="modal" onclick="overlayClose(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hdr">
+      <h3>✏️ แก้ไขข้อมูล Dashboard</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- ── ข้อมูลพนักงาน ── -->
+      <div class="form-section">
+        <div class="form-section-title">👷 จำนวนพนักงาน</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>พนักงาน AAM (คน)</label>
+            <input type="number" id="inp-aam" min="0" placeholder="296">
+          </div>
+          <div class="form-group">
+            <label>พนักงาน SUB / QWS (คน)</label>
+            <input type="number" id="inp-sub" min="0" placeholder="133">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── อุบัติเหตุ ── -->
+      <div class="form-section">
+        <div class="form-section-title">🔴 วันเกิดอุบัติเหตุถึงขั้นหยุดงานครั้งล่าสุด</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>วันที่เกิดอุบัติเหตุ</label>
+            <input type="date" id="inp-accdate">
+          </div>
+          <div class="form-group">
+            <label>เป้าหมายวันปลอดภัย (วัน)</label>
+            <input type="number" id="inp-target" min="1" placeholder="500">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── สถิติรายเดือน ── -->
+      <div class="form-section">
+        <div class="form-section-title">📊 สถิติอุบัติเหตุรายเดือน (3 เดือนล่าสุด)</div>
+        <table class="acc-table">
+          <thead>
+            <tr>
+              <th>ประเภท</th>
+              <th id="th-m1">เดือน 1</th>
+              <th id="th-m2">เดือน 2</th>
+              <th id="th-m3">เดือน 3</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="type-dot" style="background:var(--red);"></span>ถึงขั้นหยุดงาน (LTI)</td>
+              <td><input type="number" id="in-m1lti" min="0" value="0"></td>
+              <td><input type="number" id="in-m2lti" min="0" value="0"></td>
+              <td><input type="number" id="in-m3lti" min="0" value="0" placeholder="—"></td>
+            </tr>
+            <tr>
+              <td><span class="type-dot" style="background:var(--yellow);"></span>ไม่หยุดงาน (NLTI)</td>
+              <td><input type="number" id="in-m1nlt" min="0" value="0"></td>
+              <td><input type="number" id="in-m2nlt" min="0" value="0"></td>
+              <td><input type="number" id="in-m3nlt" min="0" value="0" placeholder="—"></td>
+            </tr>
+            <tr>
+              <td><span class="type-dot" style="background:var(--blue);"></span>ทรัพย์สินเสียหาย</td>
+              <td><input type="number" id="in-m1prp" min="0" value="0"></td>
+              <td><input type="number" id="in-m2prp" min="0" value="0"></td>
+              <td><input type="number" id="in-m3prp" min="0" value="0" placeholder="—"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ── วันหยุด / อุบัติเหตุในปฏิทิน ── -->
+      <div class="form-section">
+        <div class="form-section-title">📅 ทำเครื่องหมายวันในปฏิทิน (เดือนนี้)</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">ใส่วันที่คั่นด้วยลูกน้ำ เช่น 5,12,20</p>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>🔴 วันอุบัติเหตุขั้นหยุดงาน</label>
+            <input type="text" id="inp-red-days" placeholder="เช่น 5,15">
+          </div>
+          <div class="form-group">
+            <label>🟡 วันอุบัติเหตุไม่หยุดงาน</label>
+            <input type="text" id="inp-yellow-days" placeholder="เช่น 8,22">
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER BUTTONS -->
+      <div class="modal-footer">
+        <button class="btn btn-danger" onclick="resetData()">🗑 รีเซ็ตค่าเริ่มต้น</button>
+        <button class="btn btn-ghost" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn btn-primary" onclick="saveData()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          บันทึกข้อมูล
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- FULLSCREEN HINT -->
+<div class="fs-hint" id="fs-hint">ปรับขนาดอัตโนมัติ — กด F11 เพื่อเต็มจอ</div>
+
+<script>
+/* ── DEFAULT DATA ── */
+const DEFAULTS = {
+  aam: 296, sub: 133,
+  accidentDate: '2025-09-01',
+  targetDays: 500,
+  monthly: {
+    m1:{lti:0,nlt:0,prp:0}, m2:{lti:0,nlt:0,prp:0}, m3:{lti:0,nlt:0,prp:0}
+  },
+  redDays: '',
+  yellowDays: ''
+};
+
+let DATA = {};
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem('aam_dashboard_v2');
+    DATA = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULTS));
+  } catch(e) {
+    DATA = JSON.parse(JSON.stringify(DEFAULTS));
+  }
+}
+
+function saveData() {
+  // Read all inputs
+  const aam   = parseInt(document.getElementById('inp-aam').value) || DATA.aam;
+  const sub   = parseInt(document.getElementById('inp-sub').value) || DATA.sub;
+  const accdt = document.getElementById('inp-accdate').value || DATA.accidentDate;
+  const tgt   = parseInt(document.getElementById('inp-target').value) || DATA.targetDays;
+
+  DATA.aam = aam; DATA.sub = sub;
+  DATA.accidentDate = accdt;
+  DATA.targetDays = tgt;
+
+  DATA.monthly = {
+    m1:{
+      lti: parseInt(document.getElementById('in-m1lti').value)||0,
+      nlt: parseInt(document.getElementById('in-m1nlt').value)||0,
+      prp: parseInt(document.getElementById('in-m1prp').value)||0
+    },
+    m2:{
+      lti: parseInt(document.getElementById('in-m2lti').value)||0,
+      nlt: parseInt(document.getElementById('in-m2nlt').value)||0,
+      prp: parseInt(document.getElementById('in-m2prp').value)||0
+    },
+    m3:{
+      lti: parseInt(document.getElementById('in-m3lti').value)||0,
+      nlt: parseInt(document.getElementById('in-m3nlt').value)||0,
+      prp: parseInt(document.getElementById('in-m3prp').value)||0
+    }
+  };
+  DATA.redDays    = document.getElementById('inp-red-days').value;
+  DATA.yellowDays = document.getElementById('inp-yellow-days').value;
+
+  localStorage.setItem('aam_dashboard_v2', JSON.stringify(DATA));
+  closeModal();
+  render();
+  showToast('✅ บันทึกข้อมูลเรียบร้อย!', 'green');
+}
+
+function resetData() {
+  if(!confirm('ยืนยันรีเซ็ตข้อมูลทั้งหมดกลับค่าเริ่มต้น?')) return;
+  localStorage.removeItem('aam_dashboard_v2');
+  DATA = JSON.parse(JSON.stringify(DEFAULTS));
+  closeModal();
+  render();
+  showToast('🔄 รีเซ็ตข้อมูลแล้ว');
+}
+
+/* ── MODAL ── */
+function openModal() {
+  // Fill inputs with current DATA
+  document.getElementById('inp-aam').value    = DATA.aam;
+  document.getElementById('inp-sub').value    = DATA.sub;
+  document.getElementById('inp-accdate').value = DATA.accidentDate;
+  document.getElementById('inp-target').value  = DATA.targetDays;
+
+  document.getElementById('in-m1lti').value = DATA.monthly.m1.lti;
+  document.getElementById('in-m1nlt').value = DATA.monthly.m1.nlt;
+  document.getElementById('in-m1prp').value = DATA.monthly.m1.prp;
+  document.getElementById('in-m2lti').value = DATA.monthly.m2.lti;
+  document.getElementById('in-m2nlt').value = DATA.monthly.m2.nlt;
+  document.getElementById('in-m2prp').value = DATA.monthly.m2.prp;
+  document.getElementById('in-m3lti').value = DATA.monthly.m3.lti;
+  document.getElementById('in-m3nlt').value = DATA.monthly.m3.nlt;
+  document.getElementById('in-m3prp').value = DATA.monthly.m3.prp;
+
+  document.getElementById('inp-red-days').value    = DATA.redDays || '';
+  document.getElementById('inp-yellow-days').value = DATA.yellowDays || '';
+
+  // Fill month labels in table
+  const now = new Date();
+  const mnames = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  const cur = now.getMonth();
+  document.getElementById('th-m1').textContent = mnames[(cur-2+12)%12];
+  document.getElementById('th-m2').textContent = mnames[(cur-1+12)%12];
+  document.getElementById('th-m3').textContent = mnames[cur] + ' (ปัจจุบัน)';
+
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+function overlayClose(e) { if(e.target.id==='modal') closeModal(); }
+
+/* ── TOAST ── */
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type==='green'?'green':'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+/* ── HELPERS ── */
+const thaiMonths  = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const engMonths   = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const shortMonths = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const thaiDays    = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+const pad = n => String(n).padStart(2,'0');
+
+function fmtThaiDate(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return `${d.getDate()} ${thaiMonths[d.getMonth()]} ${d.getFullYear()+543}`;
+}
+function fmtEngDate(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return `${d.getDate()} ${engMonths[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+/* ── CLOCK ── */
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  document.getElementById('date-display').textContent = `วัน${thaiDays[now.getDay()]}ที่ ${now.getDate()} ${thaiMonths[now.getMonth()]} ${now.getFullYear()+543}`;
+  document.getElementById('data-time').textContent = `${pad(now.getHours())}:${pad(now.getMinutes())} น.`;
+  document.getElementById('last-update').textContent = `อัปเดต ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  document.getElementById('data-date').textContent = `${now.getDate()} ${thaiMonths[now.getMonth()]} ${now.getFullYear()+543}`;
+}
+
+/* ── RENDER DASHBOARD ── */
+function render() {
+  const now = new Date();
+
+  // Employees
+  const total = DATA.aam + DATA.sub;
+  document.getElementById('disp-aam').textContent   = DATA.aam;
+  document.getElementById('disp-sub').textContent   = DATA.sub;
+  document.getElementById('disp-total').textContent = total;
+
+  // Safe days
+  const accDate = new Date(DATA.accidentDate + 'T00:00:00');
+  const diff    = Math.floor((now - accDate) / 86400000);
+  const tgt     = DATA.targetDays;
+  const rem     = Math.max(0, tgt - diff);
+  const pct     = Math.min((diff / tgt) * 100, 100).toFixed(1);
+
+  document.getElementById('safe-days').textContent = diff;
+  document.getElementById('days-rem').textContent  = rem;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent  = pct + '%';
+  document.getElementById('disp-target').textContent  = tgt;
+  document.getElementById('disp-target2').textContent = tgt;
+  document.getElementById('ytd-days').textContent  = diff;
+
+  // Accident date display
+  document.getElementById('disp-acc-date').textContent = fmtThaiDate(DATA.accidentDate) + ' / ' + fmtEngDate(DATA.accidentDate);
+
+  // Monthly performance
+  const cur = now.getMonth();
+  document.getElementById('m1lbl').textContent = shortMonths[(cur-2+12)%12];
+  document.getElementById('m2lbl').textContent = shortMonths[(cur-1+12)%12];
+  document.getElementById('m3lbl').textContent = shortMonths[cur];
+
+  document.getElementById('pm1-lti').textContent = DATA.monthly.m1.lti;
+  document.getElementById('pm2-lti').textContent = DATA.monthly.m2.lti;
+  document.getElementById('pm3-lti').textContent = DATA.monthly.m3.lti || '—';
+  document.getElementById('pm1-nlt').textContent = DATA.monthly.m1.nlt;
+  document.getElementById('pm2-nlt').textContent = DATA.monthly.m2.nlt;
+  document.getElementById('pm3-nlt').textContent = DATA.monthly.m3.nlt || '—';
+  document.getElementById('pm1-prp').textContent = DATA.monthly.m1.prp;
+  document.getElementById('pm2-prp').textContent = DATA.monthly.m2.prp;
+  document.getElementById('pm3-prp').textContent = DATA.monthly.m3.prp || '—';
+
+  // Current month LTI for mini card
+  document.getElementById('mini-lti').textContent = DATA.monthly.m3.lti;
+
+  // Safety score
+  const totalAcc = DATA.monthly.m3.lti + DATA.monthly.m3.nlt + DATA.monthly.m3.prp;
+  document.getElementById('score-val').textContent = totalAcc === 0 ? '100%' : 'ต้องปรับปรุง';
+  document.getElementById('score-month').textContent = `เดือน ${shortMonths[cur]} ${now.getFullYear()+543}`;
+
+  // Ticker
+  document.getElementById('ticker-text').textContent =
+    `🟢 ไม่มีอุบัติเหตุถึงขั้นหยุดงานในเดือนนี้ — ปลอดภัยสะสม ${diff} วัน — เป้าหมาย Zero Accident ${tgt} วัน — เหลืออีก ${rem} วัน — พนักงานทั้งหมด ${total} คน ปลอดภัยดี 🛡️ — SAFETY FIRST — Ampas Auto Mirror Co., Ltd.`;
+
+  // Calendar
+  buildCalendar();
+}
+
+/* ── CALENDAR ── */
+function buildCalendar() {
+  const now   = new Date();
+  const year  = now.getFullYear();
+  const month = now.getMonth();
+  const today = now.getDate();
+  const firstDay    = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+
+  document.getElementById('month-badge').textContent =
+    `${thaiMonths[month]} ${year+543} / ${engMonths[month]} ${year}`;
+
+  // Parse special days
+  const parseList = str => (str||'').split(',').map(s=>parseInt(s.trim())).filter(n=>!isNaN(n)&&n>0);
+  const redDays    = parseList(DATA.redDays);
+  const yellowDays = parseList(DATA.yellowDays);
+
+  const cal = document.getElementById('calendar');
+  cal.innerHTML = '';
+
+  for(let i=0; i<firstDay; i++){
+    const el = document.createElement('div'); el.className='cal-day empty'; cal.appendChild(el);
+  }
+  for(let d=1; d<=daysInMonth; d++){
+    const el = document.createElement('div'); el.textContent = d;
+    if(d === today)             el.className = 'cal-day today';
+    else if(redDays.includes(d))    { el.className='cal-day accident'; el.title='อุบัติเหตุถึงขั้นหยุดงาน'; }
+    else if(yellowDays.includes(d)) { el.className='cal-day nearacc'; el.title='อุบัติเหตุไม่หยุดงาน'; }
+    else if(d < today)          el.className = 'cal-day safe';
+    else                        el.className = 'cal-day future';
+    cal.appendChild(el);
+  }
+}
+
+/* ── INIT ── */
+function init() {
+  loadData();
+  updateClock();
+  render();
+  setInterval(updateClock, 1000);
+  setInterval(render, 60000);
+}
+document.addEventListener('DOMContentLoaded', init);
+
+/* ── AUTO SCALE TO FIT ANY SCREEN ── */
+function scaleToFit() {
+  const scaleX = window.innerWidth  / 1280;
+  const scaleY = window.innerHeight / 720;
+  const scale  = Math.min(scaleX, scaleY);
+  document.body.style.transform = `scale(${scale})`;
+  document.body.style.marginLeft = ((window.innerWidth  - 1280 * scale) / 2) + 'px';
+  document.body.style.marginTop  = ((window.innerHeight - 720  * scale) / 2) + 'px';
+}
+window.addEventListener('resize', scaleToFit);
+scaleToFit();
+</script>
+</body>
+</html>
